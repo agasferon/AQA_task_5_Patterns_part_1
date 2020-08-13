@@ -62,9 +62,8 @@ class RegistrationTest {
 
     @Test
     void shouldNotSendIfCityIsNotAvailable() {
-        randomUser = generateUserWithInvalidCity();
         open("http://localhost:9999");
-        $("[data-test-id='city'] input").setValue(randomUser.getCity());
+        $("[data-test-id='city'] input").setValue(generateInvalidCity());
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a", Keys.DELETE);
         $("[data-test-id='date'] input").setValue(getDateIncrement());
         $("[data-test-id='name'] input").setValue(randomUser.getName());
@@ -76,27 +75,25 @@ class RegistrationTest {
 
     @Test
     void shouldNotSendIfNameIsNotCorrect() {
-        randomUser = generateUserWithInvalidName();
         open("http://localhost:9999");
         $("[data-test-id='city'] input").setValue(randomUser.getCity());
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a", Keys.DELETE);
         $("[data-test-id='date'] input").setValue(getDateIncrement());
-        $("[data-test-id='name'] input").setValue(randomUser.getName());
+        $("[data-test-id='name'] input").setValue(generateInvalidName());
         $("[data-test-id='phone'] input").setValue(randomUser.getPhone());
         $("[data-test-id='agreement']").click();
         $$("button").find(exactText("Запланировать")).click();
-        $(".input_invalid[data-test-id='name']").shouldHave(text("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
+        $(".input_invalid[data-test-id='name']").shouldHave(text("Имя и Фамилия указаны неверно. Допустимы только русские буквы, пробелы и дефисы."));
     }
 
     @Test
     void shouldNotSendIfPhoneNumberIsNotCorrect() {
-        randomUser = generateUserWithInvalidPhone();
         open("http://localhost:9999");
         $("[data-test-id='city'] input").setValue(randomUser.getCity());
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a", Keys.DELETE);
         $("[data-test-id='date'] input").setValue(getDateIncrement());
         $("[data-test-id='name'] input").setValue(randomUser.getName());
-        $("[data-test-id='phone'] input").setValue(randomUser.getPhone());
+        $("[data-test-id='phone'] input").setValue(generateInvalidPhone());
         $("[data-test-id='agreement']").click();
         $$("button").find(exactText("Запланировать")).click();
         $(".input_invalid[data-test-id='phone']").shouldHave(text("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
@@ -131,13 +128,12 @@ class RegistrationTest {
 
     @Test
     void shouldSendIfNameWithLetterYo() {
-        randomUser = generateUserWithLetterYoInName();
         open("http://localhost:9999");
         $("[data-test-id='city'] input").setValue(randomUser.getCity());
         $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a", Keys.DELETE);
         String bookingDate = getDateIncrement();
         $("[data-test-id='date'] input").setValue(bookingDate);
-        $("[data-test-id='name'] input").setValue(randomUser.getName());
+        $("[data-test-id='name'] input").setValue(generateNameWithLetterYo());
         $("[data-test-id='phone'] input").setValue(randomUser.getPhone());
         $("[data-test-id='agreement']").click();
         $$("button").find(exactText("Запланировать")).click();
@@ -146,17 +142,4 @@ class RegistrationTest {
         $("[data-test-id=success-notification]").shouldHave(text(bookingDate));
     }
 
-    @Test
-    void miswordingMessageIfNameIsNotCorrect() {
-        randomUser = generateUserWithInvalidName();
-        open("http://localhost:9999");
-        $("[data-test-id='city'] input").setValue(randomUser.getCity());
-        $("[data-test-id='date'] input").sendKeys(Keys.CONTROL + "a", Keys.DELETE);
-        $("[data-test-id='date'] input").setValue(getDateIncrement());
-        $("[data-test-id='name'] input").setValue(randomUser.getName());
-        $("[data-test-id='phone'] input").setValue(randomUser.getPhone());
-        $("[data-test-id='agreement']").click();
-        $$("button").find(exactText("Запланировать")).click();
-        $(".input_invalid[data-test-id='name']").shouldHave(text("Имя и Фамилия указаны неверно. Допустимы только русские буквы, пробелы и дефисы."));
-    }
 }
